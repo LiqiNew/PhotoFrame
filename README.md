@@ -40,7 +40,7 @@ OnDisposeOuterListener.onActivityResult(requestCode(请求编码), Intent);<br><
 OnDisposeOuterListener.startCamera();<br><br>
 //打开相册<br>
 OnDisposeOuterListener.startPhoto();<br><br>
-(！注：为了防止内存溢出,请在Activity生命周期onDestroy()调用)<br>
+(！注：为了防止内存泄漏,请在Activity生命周期onDestroy()调用)<br>
 //清理数据<br>
 OnDisposeOuterListener.clear()<br><br>
 ##### 如果觉得不错,请star给我动力.
