@@ -12,7 +12,7 @@ import android.provider.MediaStore;
 /**
  *  "获取图库地址"工具类
  */
-public class GalleryAddressTool {
+class GalleryAddressTool {
 	/**
 	 * 获取Android版本4.4版本以上的路径地址
 	 * 
@@ -20,7 +20,7 @@ public class GalleryAddressTool {
 	 * @param uri
 	 * @return
 	 */
-	public static String getPath(final Context context, final Uri uri) {
+	 static String getPath(final Context context, final Uri uri) {
 
 		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -102,7 +102,7 @@ public class GalleryAddressTool {
 	 *            (Optional) Selection arguments used in the query.
 	 * @return The value of the _data column, which is typically a file path.
 	 */
-	public static String getDataColumn(Context context, Uri uri,
+	 static String getDataColumn(Context context, Uri uri,
 			String selection, String[] selectionArgs) {
 
 		Cursor cursor = null;
@@ -128,7 +128,7 @@ public class GalleryAddressTool {
 	 *            The Uri to check.
 	 * @return Whether the Uri authority is ExternalStorageProvider.
 	 */
-	public static boolean isExternalStorageDocument(Uri uri) {
+	 static boolean isExternalStorageDocument(Uri uri) {
 		return "com.android.externalstorage.documents".equals(uri
 				.getAuthority());
 	}
@@ -138,7 +138,7 @@ public class GalleryAddressTool {
 	 *            The Uri to check.
 	 * @return Whether the Uri authority is DownloadsProvider.
 	 */
-	public static boolean isDownloadsDocument(Uri uri) {
+	 static boolean isDownloadsDocument(Uri uri) {
 		return "com.android.providers.downloads.documents".equals(uri
 				.getAuthority());
 	}
@@ -148,7 +148,7 @@ public class GalleryAddressTool {
 	 *            The Uri to check.
 	 * @return Whether the Uri authority is MediaProvider.
 	 */
-	public static boolean isMediaDocument(Uri uri) {
+	 static boolean isMediaDocument(Uri uri) {
 		return "com.android.providers.media.documents".equals(uri
 				.getAuthority());
 	}
@@ -158,7 +158,7 @@ public class GalleryAddressTool {
 	 *            The Uri to check.
 	 * @return Whether the Uri authority is Google Photos.
 	 */
-	public static boolean isGooglePhotosUri(Uri uri) {
+	 static boolean isGooglePhotosUri(Uri uri) {
 		return "com.google.android.apps.photos.content".equals(uri
 				.getAuthority());
 	}

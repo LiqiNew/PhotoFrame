@@ -8,9 +8,17 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:supportsRtl="true">
-
+        <!--7.0需要的Uri权限提供-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.liql.photograph.utils"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
 
 </manifest>

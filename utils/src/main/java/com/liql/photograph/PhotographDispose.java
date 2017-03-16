@@ -8,10 +8,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 
-import com.liql.photograph.interfa.OnPhotoSDKDispose;
-import com.liql.photograph.interfa.OnPhotographDispose;
-import com.liql.photograph.interfa.OnPhotographGetData;
+import com.liql.photograph.interfa.OnDisposeOuterListener;
+import com.liql.photograph.interfa.OnPhotoSDKDisposeListener;
+import com.liql.photograph.interfa.OnPhotographDisposeListener;
+import com.liql.photograph.interfa.OnPhotographGetDataListener;
 import com.liql.photograph.utils.ImageDispose;
 
 import java.io.File;
@@ -19,15 +22,14 @@ import java.util.Date;
 
 /**
  * Photograph操作处理对象
- * （打开图库和打开照相机兼容到android 6.0。
- * 自动压缩到指定大小。
- * ）
+ * （打开图库和打开照相机兼容到android 7.0。自动压缩到指定大小。）
  * 如有疑问请联系我
  * 联系QQ：543945827
  *
  * @author Liqi
  */
-public class PhotographDispose implements OnPhotographDispose<File> {
+class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeOuterListener {
+    private static PhotographDispose mPhotographDispose;
     /**
      * 图库的标记19版本以下
      */
@@ -41,81 +43,46 @@ public class PhotographDispose implements OnPhotographDispose<File> {
      */
     private final int SDK_PHOTOGRAPH = 0x2;
     /**
-     * 默认系统存储路径
-     */
-    private String systemPath;
-    /**
-     * 默认压缩图片存储文件夹路径
-     */
-    private String compressPath = "LiQi/compress/compressImage";
-    /**
-     * 拍照暂时存储默认路径
-     */
-    private String imagePath = "LiQi/compress/image";
-    /**
      * 拍照成功，存储文件对象
      */
-    private File imageFile;
+    private File mImageFile;
     /**
-     * 默认图片压缩大小
+     * 默认系统存储路径
      */
-    private long imageSize = 1024 * 1024;
-    private Activity activity;
-    private OnPhotographGetData<File> onPhotographGetData;
-
-    private Handler handler = new Handler() {
+    private String mSystemPath;
+    /**
+     * 配置对象
+     */
+    private PhotographConfigura mPhotographConfigura;
+    private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            if (null != onPhotographGetData)
-                onPhotographGetData.getPhotographData(msg.obj == null ? null
-                        : (File) msg.obj);
+            if (mPhotographConfigura != null) {
+                OnPhotographGetDataListener<File> onPhotographGetDataListener = mPhotographConfigura.getOnPhotographGetDataListener();
+                if (null != onPhotographGetDataListener)
+                    onPhotographGetDataListener.getPhotographData(msg.obj == null ? null
+                            : (File) msg.obj);
+            }
         }
-
-        ;
     };
 
-    public PhotographDispose(Activity activity,
-                             OnPhotographGetData<File> onPhotographGetData) {
-        this.activity = activity;
-        this.onPhotographGetData = onPhotographGetData;
-        systemPath = getSystemPath();
+    private PhotographDispose() {
+
     }
 
-    /**
-     * 设置拍照图片暂时存储地址
-     *
-     * @param path 图片暂时存储文件夹路径
-     * @return
-     */
-    public PhotographDispose setImagePath(String path) {
-        this.imagePath = path;
-        return this;
+    static PhotographDispose getPhotographDispose() {
+        return mPhotographDispose = null == mPhotographDispose ? new PhotographDispose() : mPhotographDispose;
     }
 
-    /**
-     * 设置压缩图片存储文件夹路径
-     *
-     * @param path 文件夹名字
-     * @return
-     */
-    public PhotographDispose setPath(String path) {
-        this.compressPath = path;
-        return this;
-    }
-
-    /**
-     * 设置图片压缩大小
-     *
-     * @param imageSize
-     * @return
-     */
-    public PhotographDispose setImageSize(long imageSize) {
-        this.imageSize = imageSize;
-        return this;
+    OnDisposeOuterListener init(@NonNull PhotographConfigura photographConfigura) {
+        this.mPhotographConfigura = photographConfigura;
+        mSystemPath = getSystemPath();
+        return mPhotographDispose;
     }
 
     /**
      * 打开照相机
      */
+    @Override
     public void startCamera() {
         camera();
     }
@@ -123,76 +90,88 @@ public class PhotographDispose implements OnPhotographDispose<File> {
     /**
      * 打开相册
      */
+    @Override
     public void startPhoto() {
         photo();
     }
 
     /**
-     * 获取调用处理返回结果
+     * 处理activity界面中图片回调操作
      *
      * @param requestCode
      * @param data
      */
+    @Override
     public void onActivityResult(final int requestCode, final Intent data) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                File file = null;
-                switch (requestCode) {
-                    case SDK_19_BOTTOM:
-                        if (null != data)
-                            file = getFile(new PhotoSDKBottom<File>(activity,
-                                    PhotographDispose.this), data.getData());
+                if (null != mPhotographConfigura) {
+                    Activity activity = mPhotographConfigura.getActivity();
+                    File file = null;
+                    switch (requestCode) {
+                        case SDK_19_BOTTOM:
+                            if (null != data)
+                                file = getFile(new PhotoSDKBottomListener<File>(activity,
+                                        PhotographDispose.this), data.getData());
 
-                        break;
-                    case SDK_19_TOP:
-                        if (null != data)
-                            file = getFile(new PhotoSDKTop<File>(activity,
-                                    PhotographDispose.this), data.getData());
-                        break;
-                    case SDK_PHOTOGRAPH:
-                        if (null != imageFile)
-                            // 压缩拍照照片
-                            file = getPhotographDisposeData(imageFile.getPath());
-                        if (null != file) {
-                            // 删掉没有压缩的照片
-                            imageFile.delete();
-                            imageFile = null;
-                        }
-                        break;
+                            break;
+                        case SDK_19_TOP:
+                            if (null != data)
+                                file = getFile(new PhotoSDKTopListener<File>(activity,
+                                        PhotographDispose.this), data.getData());
+                            break;
+                        case SDK_PHOTOGRAPH:
+                            if (null != mImageFile)
+                                // 压缩拍照照片
+                                file = getPhotographDisposeData(mImageFile.getPath());
+                            if (mPhotographConfigura.isDelePGImage()) {
+                                if (null != file) {
+                                    // 删掉没有压缩的照片
+                                    mImageFile.delete();
+                                    mImageFile = null;
+                                }
+                            }
+                            break;
+                    }
+                    Message message = mHandler.obtainMessage();
+                    message.obj = file;
+                    mHandler.sendMessage(message);
                 }
-                Message message = handler.obtainMessage();
-                message.obj = file;
-                handler.sendMessage(message);
             }
         }).start();
+    }
+
+    @Override
+    public void clear() {
+        mPhotographConfigura = null;
     }
 
     /**
      * 采用策略模式去获取File
      *
-     * @param onPhotoSDKDispose 获取File的接口
-     * @param uri               uri地址
+     * @param onPhotoSDKDisposeListener 获取File的接口
+     * @param uri                       uri地址
      * @return
      */
-    private File getFile(OnPhotoSDKDispose<File> onPhotoSDKDispose, Uri uri) {
-        return onPhotoSDKDispose.getPhotoData(uri);
+    private File getFile(OnPhotoSDKDisposeListener<File> onPhotoSDKDisposeListener, Uri uri) {
+        return onPhotoSDKDisposeListener.getPhotoData(uri);
     }
 
     /**
      * 相册调用
      */
     private void photo() {
-        if (null != activity) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                activity.startActivityForResult(intent, SDK_19_TOP);
-            } else {
-                activity.startActivityForResult(intent, SDK_19_BOTTOM);
-            }
+        Activity activity = mPhotographConfigura.getActivity();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setType("image/*");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            activity.startActivityForResult(intent, SDK_19_TOP);
+        } else {
+            activity.startActivityForResult(intent, SDK_19_BOTTOM);
         }
     }
 
@@ -200,19 +179,28 @@ public class PhotographDispose implements OnPhotographDispose<File> {
      * 相机调用
      */
     private void camera() {
-        if (null != activity) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            imageFile = getPath("", imagePath);
-            Uri mOutPutFileUri = Uri.fromFile(imageFile);
-            // 拍照图片地址存储地址写入
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mOutPutFileUri);
-            activity.startActivityForResult(intent, SDK_PHOTOGRAPH);
+        Activity activity = mPhotographConfigura.getActivity();
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mImageFile = getPath("", mPhotographConfigura.getImagePath());
+        Uri mOutPutFileUri;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            //7.0需要
+            mOutPutFileUri = FileProvider.getUriForFile(activity, "com.liql.photograph.utils", mImageFile);
+        } else {
+            mOutPutFileUri = Uri.fromFile(mImageFile);
         }
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        // 拍照图片地址存储地址写入
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mOutPutFileUri);
+        activity.startActivityForResult(intent, SDK_PHOTOGRAPH);
     }
 
     @Override
     public File getPhotographDisposeData(String path) {
-        File file = getPath(getImageName(path), compressPath);
+        if (mPhotographConfigura == null)
+            return null;
+
+        File file = getPath(getImageName(path), mPhotographConfigura.getCompressPath());
         // 判断用户选择的图片是否已经压缩过
         if (!file.exists()) {
             Bitmap bitmap = ImageDispose.acquireBitmap(path, 0, 0);
@@ -235,8 +223,11 @@ public class PhotographDispose implements OnPhotographDispose<File> {
      * @return
      */
     private File bitmapToFile(Bitmap bitmap, String path) {
+        if (mPhotographConfigura == null)
+            return null;
+
         if (null != bitmap) {
-            byte[] bytes = ImageDispose.compressBmpFromByte(bitmap, imageSize);
+            byte[] bytes = ImageDispose.compressBmpFromByte(bitmap, mPhotographConfigura.getImageSize());
             return ImageDispose.acquireByteFile(bytes, path);
         }
         return null;
@@ -255,7 +246,7 @@ public class PhotographDispose implements OnPhotographDispose<File> {
             long time = date.getTime();
             imageName = String.valueOf(time) + ".jpg";
         }
-        File file = new File(systemPath + File.separator + path);
+        File file = new File(mSystemPath + File.separator + path);
         // 判断存储图片的文件夹是否存在
         if (!file.exists())
             file.mkdirs();
@@ -269,7 +260,7 @@ public class PhotographDispose implements OnPhotographDispose<File> {
      * @param path 图片路径
      * @return
      */
-    public String getImageName(String path) {
+    private String getImageName(String path) {
         String imageName = "";
         String[] split = path.split("/");
         if (null != split)
@@ -289,7 +280,7 @@ public class PhotographDispose implements OnPhotographDispose<File> {
                 Environment.MEDIA_MOUNTED)) {
             path = Environment.getExternalStorageDirectory().toString();
         } else {
-            path = activity.getCacheDir().toString();
+            path = mPhotographConfigura.getActivity().getFilesDir().toString();
         }
         return path;
     }

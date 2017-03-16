@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import com.liql.photograph.interfa.OnPhotoSDKDispose;
-import com.liql.photograph.interfa.OnPhotographDispose;
+import com.liql.photograph.interfa.OnPhotoSDKDisposeListener;
+import com.liql.photograph.interfa.OnPhotographDisposeListener;
 
 /**
  * SDK低于19相册处理对象
@@ -15,14 +15,14 @@ import com.liql.photograph.interfa.OnPhotographDispose;
  * 
  * @param <T>
  */
-public class PhotoSDKBottom<T> implements OnPhotoSDKDispose<T> {
-	private OnPhotographDispose<T> onPhotographDispose;
+ class PhotoSDKBottomListener<T> implements OnPhotoSDKDisposeListener<T> {
+	private OnPhotographDisposeListener<T> mOnPhotographDisposeListener;
 	private Activity activity;
 
-	PhotoSDKBottom(Activity activity,
-			OnPhotographDispose<T> onPhotographDispose) {
+	PhotoSDKBottomListener(Activity activity,
+						   OnPhotographDisposeListener<T> onPhotographDisposeListener) {
 		this.activity = activity;
-		this.onPhotographDispose = onPhotographDispose;
+		this.mOnPhotographDisposeListener = onPhotographDisposeListener;
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class PhotoSDKBottom<T> implements OnPhotoSDKDispose<T> {
 
 			String path = cursor.getString(column_index);
 			cursor.close();
-			if (null != onPhotographDispose) {
-				return onPhotographDispose.getPhotographDisposeData(path);
+			if (null != mOnPhotographDisposeListener) {
+				return mOnPhotographDisposeListener.getPhotographDisposeData(path);
 			}
 			return null;
 		} else

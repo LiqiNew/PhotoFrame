@@ -7,7 +7,7 @@ package com.liql.photograph.interfa;
  * 
  * @param <T>
  */
-public interface OnPhotographDispose<T> {
+public interface OnPhotographDisposeListener<T> {
 	/**
 	 * 把路径转换成其它对象
 	 * 

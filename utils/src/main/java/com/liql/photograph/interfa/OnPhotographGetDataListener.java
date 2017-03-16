@@ -6,6 +6,6 @@ package com.liql.photograph.interfa;
  * @author Liqi
  * 
  */
-public interface OnPhotographGetData<T> {
+public interface OnPhotographGetDataListener<T> {
 	public void getPhotographData(T t);
 }

@@ -9,7 +9,7 @@ import android.net.Uri;
  * 
  * @param <T>
  */
-public interface OnPhotoSDKDispose<T> {
+public interface OnPhotoSDKDisposeListener<T> {
 	/**
 	 * 把Uri转换成其它对象
 	 * 
