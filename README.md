@@ -43,6 +43,8 @@ OnDisposeOuterListener.startPhoto();<br><br>
 (！注：为了防止内存泄漏,请在Activity生命周期onDestroy()调用)<br>
 //清理数据<br>
 OnDisposeOuterListener.clear()<br><br>
+6.0系统以上需要自己动态添加权限
+-----
 ##### 如果觉得不错,请star给我动力.
 
 ### 如有疑问请联系我
