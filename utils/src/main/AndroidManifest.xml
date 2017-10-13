@@ -6,9 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!--  从SDCard读取数据权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <application
-        android:allowBackup="true"
-        android:supportsRtl="true">
+    <application>
         <!--7.0需要的Uri权限提供-->
         <provider
             android:name="android.support.v4.content.FileProvider"
