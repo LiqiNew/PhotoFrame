@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             break;
                     }
                 } else {
-                    Toast.makeText(this, "改功能需要相机和读写文件权限", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "该功能需要相机和读写文件权限", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //防止内存泄漏,请求在界面kill掉调用
+        //防止内存泄漏,请在界面kill掉调用
         mOnDisposeOuterListener.clear();
     }
 }
