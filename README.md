@@ -26,7 +26,7 @@ allprojects {
 **2：Depends on the PhotoFrame framework**<br>
 
 ```gradle
-compile 'com.github.liqinew:photoframe:v.1.0.0'
+compile 'com.github.liqinew:photoframe:v.1.0.1'
 ```
 
 ## How do I use it with PhotoFrame?
