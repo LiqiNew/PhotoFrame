@@ -66,6 +66,47 @@ OnDisposeOuterListener.startPhoto();
 //注：为了防止内存泄漏,请在Activity生命周期onDestroy()调用。
 OnDisposeOuterListener.clear()
 ```
+**3：ImageDispose图片操作工具对象，提供一系列静态方法对图片或者图片路径进行操作。**<br>
+```java
+//通过输入流转换成字节数组
+ImageDispose.readStream(InputStream inStream);
+
+//通过字节数组和BitmapFactory转换成Bitmap
+ImageDispose.getPicFromBytes(byte[] bytes,BitmapFactory.Options opts);
+
+//转换成指定大小的Bitmap
+ImageDispose.zoomBitmap(Bitmap bitmap, int w, int h);
+
+//把bitmap转换成字节数组
+ImageDispose.bitmap2Bytes(Bitmap bm, int quality);
+
+//切割指定大小的Bitmap对象
+ImageDispose.cutterBitmap(Bitmap srcBitmap, int limitWidth,int limitHeight);
+
+//图片压缩，返回bitmap字节数组
+ImageDispose.compressBmpFromByte(Bitmap bitmap, long maxsize);
+
+//图片压缩，返回压缩的bitmap
+ImageDispose.compressBmpGetBmp(Bitmap bitmap, long maxsize);
+
+//通过地址获取指定大小的Bitmap(质量压缩)
+ImageDispose.acquireBitmap(String path, int compressSize);
+
+//Drawable转Bitmap
+ImageDispose.drawableToBitmap(Drawable drawable);
+
+//Drawable 指定大小的缩放
+ImageDispose.zoomDrawable(Drawable drawable, int w, int h);
+
+//字节数组转换File对象
+ImageDispose.acquireByteFile(byte[] byteOne, String filePath);
+
+//获取图片路径切割出来的图片名字，路径需要带扩展名
+ImageDispose.getImageName(String path);
+
+//产生随机唯一图片名称，路径需要带扩展名
+ImageDispose.getImageRandomName(String path);
+```
 
 6.0系统以上需要自己动态添加权限
 -----

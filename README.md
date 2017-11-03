@@ -70,6 +70,49 @@ OnDisposeOuterListener.startPhoto();
 OnDisposeOuterListener.clear()
 ```
 
+**3：ImageDispose image manipulation tool object, providing a series of static methods to manipulate the image or image path.**<br>
+
+```java
+//Converts the input stream into a byte array
+ImageDispose.readStream(InputStream inStream);
+
+//Converted to Bitmap by byte array and BitmapFactory
+ImageDispose.getPicFromBytes(byte[] bytes,BitmapFactory.Options opts);
+
+//Convert to a specified size Bitmap
+ImageDispose.zoomBitmap(Bitmap bitmap, int w, int h);
+
+//Convert bitmap to byte array
+ImageDispose.bitmap2Bytes(Bitmap bm, int quality);
+
+//Cut a specified size Bitmap object
+ImageDispose.cutterBitmap(Bitmap srcBitmap, int limitWidth,int limitHeight);
+
+//Image compression, return bitmap byte array
+ImageDispose.compressBmpFromByte(Bitmap bitmap, long maxsize);
+
+//Image compression, return compressed bitmap
+ImageDispose.compressBmpGetBmp(Bitmap bitmap, long maxsize);
+
+//Get the specified size of Bitmap by address, the quality of compression
+ImageDispose.acquireBitmap(String path, int compressSize);
+
+//Drawable to Bitmap
+ImageDispose.drawableToBitmap(Drawable drawable);
+
+//Drawable The specified size of the zoom
+ImageDispose.zoomDrawable(Drawable drawable, int w, int h);
+
+//Byte array conversion File object
+ImageDispose.acquireByteFile(byte[] byteOne, String filePath);
+
+//Get the image path to cut out the name of the picture, the path needs to be extended
+ImageDispose.getImageName(String path);
+
+//Generate a random unique picture name, the path needs to be extended
+ImageDispose.getImageRandomName(String path);
+```
+
 6.0 system above need to add their own dynamic permissions
 -----
 ##### If you feel good, please star give me motivation.<br><br>thank you very much.

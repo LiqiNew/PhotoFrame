@@ -113,13 +113,13 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
                     switch (requestCode) {
                         case SDK_19_BOTTOM:
                             if (null != data)
-                                file = getFile(new PhotoSDKBottomListener<File>(activity,
+                                file = getFile(new PhotoSDKBottomListener<>(activity,
                                         PhotographDispose.this), data.getData());
 
                             break;
                         case SDK_19_TOP:
                             if (null != data)
-                                file = getFile(new PhotoSDKTopListener<File>(activity,
+                                file = getFile(new PhotoSDKTopListener<>(activity,
                                         PhotographDispose.this), data.getData());
                             break;
                         case SDK_PHOTOGRAPH:
@@ -200,7 +200,7 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
         if (mPhotographConfigura == null)
             return null;
 
-        File file = getPath(getImageName(path), mPhotographConfigura.getCompressPath());
+        File file = getPath(ImageDispose.getImageName(path), mPhotographConfigura.getCompressPath());
         // 判断用户选择的图片是否已经压缩过
         if (!file.exists()) {
             Bitmap bitmap = ImageDispose.acquireBitmap(path, 0, 0);
@@ -248,25 +248,12 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
         }
         File file = new File(mSystemPath + File.separator + path);
         // 判断存储图片的文件夹是否存在
-        if (!file.exists())
+        if (!file.exists()) {
             file.mkdirs();
-
+        }
         return new File(file.getPath(), imageName);
     }
 
-    /**
-     * 获取图片路径切割出来的图片名字
-     *
-     * @param path 图片路径
-     * @return
-     */
-    private String getImageName(String path) {
-        String imageName = "";
-        String[] split = path.split("/");
-        if (null != split)
-            imageName = split[split.length - 1];
-        return imageName;
-    }
 
     /**
      * 获取手机存储图片保存路径
@@ -274,7 +261,7 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
      * @return
      */
     private String getSystemPath() {
-        String path = "";
+        String path;
         // 判断是否安装有SD卡
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
