@@ -23,7 +23,7 @@ allprojects {
 **2：依赖PhotoFrame框架**<br>
 
 ```gradle
-compile 'com.github.liqinew:photoframe:v.1.0.1'
+compile 'com.github.liqinew:photoframe:v.1.0.2'
 ```
 
 ## 如何通过PhotoFrame去使用?
