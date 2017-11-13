@@ -184,8 +184,9 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
         mImageFile = getPath("", mPhotographConfigura.getImagePath());
         Uri mOutPutFileUri;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            String packageName = activity.getApplication().getPackageName();
             //7.0需要
-            mOutPutFileUri = FileProvider.getUriForFile(activity, "com.liql.photograph.utils", mImageFile);
+            mOutPutFileUri = FileProvider.getUriForFile(activity,packageName+".photograph.utils", mImageFile);
         } else {
             mOutPutFileUri = Uri.fromFile(mImageFile);
         }

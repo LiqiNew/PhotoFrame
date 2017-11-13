@@ -10,7 +10,7 @@
         <!--7.0需要的Uri权限提供-->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.liql.photograph.utils"
+            android:authorities="${applicationId}.photograph.utils"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
