@@ -33,15 +33,15 @@ class PhotographDispose implements OnPhotographDisposeListener<File>, OnDisposeO
     /**
      * 图库的标记19版本以下
      */
-    private final int SDK_19_BOTTOM = -0x1;
+    private final int SDK_19_BOTTOM = 0x1;
     /**
      * 图库的标记19版本以上
      */
-    private final int SDK_19_TOP = 0x1;
+    private final int SDK_19_TOP = 0x2;
     /**
      * 相机的标记
      */
-    private final int SDK_PHOTOGRAPH = 0x2;
+    private final int SDK_PHOTOGRAPH = 0x3;
     /**
      * 拍照成功，存储文件对象
      */
